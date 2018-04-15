@@ -24,22 +24,26 @@ def fetch(problemId):
 
 
 def run_tests(executable_file, data):
-    import difflib
     for serial, d in enumerate(data):
-        actual = run_test(executable_file, d["in"])
-        if d["out"] != actual:
-            diff = difflib.ndiff(d["out"].splitlines(keepends=True), actual.splitlines(keepends=True))
-            print(serial, "mismatch")
-            print(''.join(diff), end="")
-        else:
-            print(serial, "match")
+        run_test(executable_file, serial, d["in"], d["out"])
 
 
 
-def run_test(executable_file_path, in_data):
+def run_test(executable_file_path, serial, in_data, out_data):
     import subprocess
+    import difflib
+
     proc = subprocess.run([executable_file_path], input=in_data, stdout=subprocess.PIPE, universal_newlines=True)
-    return proc.stdout
+    actual = proc.stdout
+
+    if out_data != actual:
+        diff = difflib.ndiff(out_data.splitlines(keepends=True), actual.splitlines(keepends=True))
+        print(serial, "mismatch")
+        print(''.join(diff), end="")
+        return False
+    else:
+        print(serial, "match")
+        return True
 
 
 
