@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 # Copyright © 2018 Yuki Mukasa. All rights reserved.
 # Toggl Report から、日報提出フォームに自動でSubmitを行うコマンド
 # pip depencies: requests click selenium chromedriver-binary arrow
