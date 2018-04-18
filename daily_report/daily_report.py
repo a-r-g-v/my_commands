@@ -115,7 +115,7 @@ class FormData(object):
         def hours_minutes(td):
             hours, remainder = divmod(td.seconds, 3600)
             minutes, seconds = divmod(remainder, 60)
-            seconds += td.microseconds / 1e6
+            seconds += int((td.microseconds / 1e6) / 100)
             return hours, minutes, seconds
         return hours_minutes(self.total_delta)
 
