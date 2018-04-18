@@ -200,7 +200,7 @@ def report(date, api_token, workspace, project_id):
 @click.command()
 @click.option('--date', default=datetime.now().date().strftime('%Y-%m-%d'))
 @click.option('--plan', required=True)
-@click.option('--comment')
+@click.option('--comment', default="")
 def main(date, plan, comment):
     date = arrow.get(date).date()
     reports = report(date, config.TOGGL_API_KEY, config.TOGGL_WORKSPACE_ID, config.TOGGL_PROJECT_ID)
