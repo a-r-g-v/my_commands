@@ -1,0 +1,63 @@
+#!/usr/bin/python3
+# coding: utf-8
+
+import requests
+import sys
+import io
+import os
+import tempfile
+
+
+def fetch(problemId):
+    result = []
+    for serial in range(1, 100):
+        r = requests.get("https://judgedat.u-aizu.ac.jp/testcases/{problemId}/{serial}".format(problemId=problemId, serial=serial))
+        if not r.ok:
+            break
+        try:
+            data = r.json()
+        except:
+            break
+        result.append({"in" : data["in"], "out": data["out"]})
+    return result
+
+
+
+def run_tests(executable_file, data):
+    for serial, d in enumerate(data):
+        run_test(executable_file, serial, d["in"], d["out"])
+
+
+
+def run_test(executable_file_path, serial, in_data, out_data):
+    import subprocess
+    import difflib
+
+    proc = subprocess.run([executable_file_path], input=in_data, stdout=subprocess.PIPE, universal_newlines=True)
+    actual = proc.stdout
+
+    if out_data != actual:
+        diff = difflib.ndiff(out_data.splitlines(keepends=True), actual.splitlines(keepends=True))
+        print(serial, "mismatch")
+        print(''.join(diff), end="")
+        return False
+    else:
+        print(serial, "match")
+        return True
+
+
+
+def main():
+    if len(sys.argv) != 3:
+        print("""
+Usage:
+    {name} <problemId> <a-path-of-testing-target-executable-binary>
+        """.format(name=sys.argv[0]))
+        sys.exit(1)
+
+    data = fetch(sys.argv[1])
+    run_tests(sys.argv[2], data)
+
+
+if __name__ == '__main__':
+    main()
